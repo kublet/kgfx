@@ -1,0 +1,144 @@
+#include <TFT_eSPI.h>
+
+#include "font_Arial.h"
+#include "kgfx.h"
+
+void KGFX::init() {
+  tft.begin();
+  palette[0] = TFT_BLACK;
+}
+
+void KGFX::clear() {
+  tf.fillScreen(TFT_BLACK);
+  tft.fillScreen(TFT_BLACK);  
+}
+
+TFT_eSprite KGFX::initSprite(int width, int height) {
+  TFT_eSprite spr = TFT_eSprite(&tft);
+  spr.setColorDepth(16);
+  spr.createSprite(width, height);
+  return spr;
+}
+
+void KGFX::drawText(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int x, int y) {
+  tft.TTFdestination(&spr);
+  spr.fillSprite(TFT_BLACK);
+
+  tft.setTTFFont(f);
+  tft.setTextColor(color, TFT_BLACK);
+  tft.setCursor(0,0);
+  tft.print(txt);
+
+  spr.pushSprite(x, y);
+}
+
+void KGFX::initChartSprite() {
+  chartSpr.setColorDepth(16);
+  chartSpr.createSprite(240,80);
+}
+
+void KGFX::deleteChart() {
+  chartSpr.deleteSprite();
+}
+
+void KGFX::drawChart(std::vector<float> arr, int color, int y) {
+  tft.TTFdestination(&chartSpr);
+  chartSpr.fillSprite(TFT_BLACK);
+
+  createPalette(color);
+  chartSpr.createPalette(palette);
+
+  int *fa = fmtChartArray(arr);
+  for (int i=0;i<(chartLen-2);i++) {
+    drawGraphLine(i*7, fa[i+1], (i+1)*7, fa[i+2], color);
+  }
+
+  for (int i=0;i<210;i++) {
+    for (int j=0;j<80;j++) {
+      if (TFT_BLACK == chartSpr.readPixel(i, j) && (j>0 && TFT_BLACK != chartSpr.readPixel(i, j-1))) {
+        drawVGradient(i, j, 5);
+        break;
+      }
+    }
+  }
+
+  chartSpr.pushSprite(0, y);
+}
+
+void KGFX::createPalette(int color) {
+  if (color == K_GREEN) {
+    for (int i=0;i<15;i++) {
+      palette[i+1] = green_palette[i];
+    }
+    return;
+  }
+  if (color == K_RED) {
+    for (int i=0;i<15;i++) {
+      palette[i+1] = red_palette[i];
+    }
+    return;
+  }
+}
+
+void KGFX::drawGraphLine(int x, int y, int x1, int y1, int pcolor) {
+  for (int i=0;i<3;i++) {
+    chartSpr.drawLine(x, y, x1, y1, pcolor);
+
+    y++; y1++;
+  }
+}
+
+void KGFX::drawVGradient(int x, int y, int y1) {
+  int off = abs(y1 - y);
+
+  for (int i=3;i<=15;i++) {
+    for (int j = 0; j < 5; j++) {
+      if (off-- && off > 0) {
+        continue;
+      }
+
+      chartSpr.drawPixel(x, y, palette[i]);
+      y++;
+    }  
+  }
+}
+
+int* KGFX::fmtChartArray(std::vector<float> arr) {
+  int multi = 1;
+  if (arr.size() < 30) {
+    Serial.println("Malformed array len: cannot fmt");
+    return nullptr;
+  }
+
+  float v = arr[0];
+  if (v >= 1000) {
+  } else {
+    if (v >= 10 && v < 1000) {
+      multi = 100;
+    } else {
+      multi = 10000;
+    }
+  }
+
+  int hi = arr[0] * multi;
+  int lo = arr[0] * multi;
+  int *fa = new int[chartLen]; 
+
+  for(int i=1;i<chartLen;i++) {
+    int v = arr[i] * multi;
+    if (v > hi) {
+      hi = v;
+    }
+    if (v < lo) {
+      lo = v;
+    }
+  }
+
+  int diff = hi - lo;
+  for(int i=0;i<chartLen;i++) {
+    int v = arr[i] * multi;
+    fa[i] = 50-round(((v-lo) *50)/diff);
+  }
+
+  return fa;
+}

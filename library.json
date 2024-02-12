@@ -1,0 +1,23 @@
+{
+  "name": "KGFX",
+  "version": "0.0.1",
+  "keywords": "Arduino, ESP32",
+  "description": "A GFX library for development on Kublet devices",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/kublet/kgfx"
+  },
+  "authors":
+  [
+    {
+        "name": "Kublet",
+        "email": "kubletdev@gmail.com",
+        "maintainer": true
+    }
+  ],
+  "homepage": "https://thekublet.com/",
+  "frameworks": "arduino",
+  "platforms": "espressif32",
+  "headers": "kgfx.h"
+}
