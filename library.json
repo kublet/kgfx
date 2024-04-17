@@ -1,6 +1,6 @@
 {
   "name": "KGFX",
-  "version": "0.0.1",
+  "version": "0.0.10",
   "keywords": "Arduino, ESP32",
   "description": "A GFX library for development on Kublet devices",
   "repository":
@@ -17,6 +17,9 @@
     }
   ],
   "homepage": "https://thekublet.com/",
+  "dependencies": {
+    "bodmer/TFT_eSPI": "~2.5.0"
+  },
   "frameworks": "arduino",
   "platforms": "espressif32",
   "headers": "kgfx.h"

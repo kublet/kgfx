@@ -2,8 +2,10 @@
 
 #include <SPI.h>
 #include <TFT_eSPI.h>
-#include "TFT_eSPI_ext.h"
 #include <vector>
+
+#include "TFT_eSPI_ext.h"
+#include "font_Arial.h"
 
 #define K_GREEN TFT_GREEN
 #define K_RED TFT_RED
@@ -31,12 +33,14 @@ class KGFX {
     void init();
     void clear();
        
-    TFT_eSprite initSprite(int width, int height);
-    void initChartSprite();
+    TFT_eSprite createSprite(int width, int height);
+    void createChartSprite();
 
     void drawText(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int x, int y);
     void drawText(const char *txt, const tftfont_t &f, int color, int x, int y);
 
-    void deleteChart();
+    void deleteSprite(TFT_eSprite &spr);
+    void deleteChartSprite();
+
     void drawChart(std::vector<float> arr, int color, int y);
 };
