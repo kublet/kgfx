@@ -7,7 +7,7 @@
 ** Description:             Initializes GFX library
 ***************************************************************************************/
 void KGFX::init() {
-  tft.begin();
+  tf.begin();
   palette[0] = TFT_BLACK;
 }
 
@@ -16,8 +16,16 @@ void KGFX::init() {
 ** Description:             Paints screen black
 ***************************************************************************************/
 void KGFX::clear() {
-  tf.fillScreen(TFT_BLACK);
-  tft.fillScreen(TFT_BLACK);  
+  t.fillScreen(TFT_BLACK);
+  tf.fillScreen(TFT_BLACK);  
+}
+
+/***************************************************************************************
+** Function name:           tft
+** Description:             Returns tft instance
+***************************************************************************************/
+ TFT_eSPI_ext KGFX::tft() {
+  return tf;
 }
 
 /***************************************************************************************
@@ -25,7 +33,7 @@ void KGFX::clear() {
 ** Description:             Creates sprite with given width and height
 ***************************************************************************************/
 TFT_eSprite KGFX::createSprite(int width, int height) {
-  TFT_eSprite spr = TFT_eSprite(&tft);
+  TFT_eSprite spr = TFT_eSprite(&tf);
   spr.setColorDepth(16);
   spr.createSprite(width, height);
   return spr;
@@ -36,13 +44,13 @@ TFT_eSprite KGFX::createSprite(int width, int height) {
 ** Description:             Draws text to given sprite
 ***************************************************************************************/
 void KGFX::drawText(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int x, int y) {
-  tft.TTFdestination(&spr);
+  tf.TTFdestination(&spr);
   spr.fillSprite(TFT_BLACK);
 
-  tft.setTTFFont(f);
-  tft.setTextColor(color, TFT_BLACK);
-  tft.setCursor(0,0);
-  tft.print(txt);
+  tf.setTTFFont(f);
+  tf.setTextColor(color, TFT_BLACK);
+  tf.setCursor(0,0);
+  tf.print(txt);
 
   spr.pushSprite(x, y);
 }
@@ -52,10 +60,10 @@ void KGFX::drawText(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int c
 ** Description:             Draws text to screen
 ***************************************************************************************/
 void KGFX::drawText(const char *txt, const tftfont_t &f, int color, int x, int y) {
-  tft.setTTFFont(f);
-  tft.setTextColor(color, TFT_BLACK);
-  tft.setCursor(x,y);
-  tft.print(txt);
+  tf.setTTFFont(f);
+  tf.setTextColor(color, TFT_BLACK);
+  tf.setCursor(x,y);
+  tf.print(txt);
 }
 
 /***************************************************************************************
@@ -88,7 +96,7 @@ void KGFX::deleteChartSprite() {
 ** Description:             Draws chart to sprite
 ***************************************************************************************/
 void KGFX::drawChart(std::vector<float> arr, int color, int y) {
-  tft.TTFdestination(&chartSpr);
+  tf.TTFdestination(&chartSpr);
   chartSpr.fillSprite(TFT_BLACK);
 
   createPalette(color);
