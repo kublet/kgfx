@@ -19,12 +19,11 @@ class KGFX {
     uint16_t green_palette[15] =  {K_GREEN, 0x02C0, 0x0240, 0x0200, 0x01C0, 0x0180, 0x0140, 0x0100, 0x00E0, 0x00C0, 0x00A0, 0x0080, 0x0060, 0x0040, 0x0020};
 
     int chartLen = 30;
-    int chartSpacing = 7;
     uint16_t palette[16];
 
-    int* fmtChartArray(std::vector<float> arr);
+    int* fmtChartArray(std::vector<float> arr, int height=80);
     void createPalette(int color);
-    void drawVGradient(int x, int y, int y1);
+    void drawVGradient(int x, int y, int y1=5);
     void drawGraphLine(int x, int y, int x1, int y1, int color);
 
   public:
@@ -36,7 +35,10 @@ class KGFX {
     TFT_eSprite chartSpr = TFT_eSprite(&tft);
 
     TFT_eSprite createSprite(int width, int height);
+    TFT_eSprite createSpriteLarge(int width, int height);
+
     void createChartSprite();
+    void createChartSpriteLarge(int x, int y);
 
     void drawText(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int x, int y);
     void drawText(const char *txt, const tftfont_t &f, int color, int x, int y);
@@ -44,5 +46,7 @@ class KGFX {
     void deleteSprite(TFT_eSprite &spr);
     void deleteChartSprite();
 
-    void drawChart(std::vector<float> arr, int color, int y);
+    void drawChart(std::vector<float> arr, int color, int y, int spacing=7, int height=80);
+    void drawChartWide(std::vector<float> arr, int color, int y);
+    void drawChartLarge(std::vector<float> arr, int color, int y, int height=120);
 };

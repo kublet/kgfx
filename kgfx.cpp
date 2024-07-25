@@ -32,6 +32,21 @@ TFT_eSprite KGFX::createSprite(int width, int height) {
 }
 
 /***************************************************************************************
+** Function name:           createSpriteLarge
+** Description:             Creates sprite with given width and height
+***************************************************************************************/
+TFT_eSprite KGFX::createSpriteLarge(int width, int height) {
+  TFT_eSprite spr = TFT_eSprite(&tft);
+  // On an ESP32 the workspace RAM is more limited than the datasheet implies so a
+  // 16-bit colour Sprite is limited to about 200x200 pixels (~80Kbytes), an 8-bit
+  // sprite to 320x240 pixels (~76kbytes)
+  // https://github.com/Bodmer/TFT_eSPI?tab=readme-ov-file#sprites
+  spr.setColorDepth(8);
+  spr.createSprite(width, height);
+  return spr;
+}
+
+/***************************************************************************************
 ** Function name:           drawText
 ** Description:             Draws text to given sprite
 ***************************************************************************************/
@@ -68,6 +83,15 @@ void KGFX::createChartSprite() {
 }
 
 /***************************************************************************************
+** Function name:           createChartSpriteLarge
+** Description:             Creates chart sprite with 8 bit colors
+***************************************************************************************/
+void KGFX::createChartSpriteLarge(int x, int y) {
+  chartSpr.setColorDepth(8);
+  chartSpr.createSprite(x,y);
+}
+
+/***************************************************************************************
 ** Function name:           deleteSprite
 ** Description:             Deletes given sprite
 ***************************************************************************************/
@@ -85,30 +109,50 @@ void KGFX::deleteChartSprite() {
 
 /***************************************************************************************
 ** Function name:           drawChart
-** Description:             Draws chart to sprite
+** Description:             Draws default chart size to sprite
 ***************************************************************************************/
-void KGFX::drawChart(std::vector<float> arr, int color, int y) {
+void KGFX::drawChart(std::vector<float> arr, int color, int y, int spacing, int height) {
   tft.TTFdestination(&chartSpr);
   chartSpr.fillSprite(TFT_BLACK);
 
   createPalette(color);
   chartSpr.createPalette(palette);
 
-  int *fa = fmtChartArray(arr);
+  int *fa = fmtChartArray(arr, height);
   for (int i=0;i<(chartLen-2);i++) {
-    drawGraphLine(i*7, fa[i+1], (i+1)*7, fa[i+2], color);
+    drawGraphLine(i*spacing, fa[i+1], (i+1)*spacing, fa[i+2], color);
   }
 
-  for (int i=0;i<210;i++) {
-    for (int j=0;j<80;j++) {
+  int multi = 5;
+  if (height>80) {
+    multi = height/12;
+  }
+  for (int i=0;i<240;i++) {
+    for (int j=0;j<height;j++) {
       if (TFT_BLACK == chartSpr.readPixel(i, j) && (j>0 && TFT_BLACK != chartSpr.readPixel(i, j-1))) {
-        drawVGradient(i, j, 5);
+        drawVGradient(i, j, multi);
         break;
       }
     }
   }
 
   chartSpr.pushSprite(0, y);
+}
+
+/***************************************************************************************
+** Function name:           drawChartWide
+** Description:             Draws default chart size that fills entire width to sprite
+***************************************************************************************/
+void KGFX::drawChartWide(std::vector<float> arr, int color, int y) {
+  drawChart(arr, color, y, 8);
+}
+
+/***************************************************************************************
+** Function name:           drawChartLarge
+** Description:             Draws wide chart that default to 120 pixel height chart
+***************************************************************************************/
+void KGFX::drawChartLarge(std::vector<float> arr, int color, int y, int height) {
+  drawChart(arr, color, y, 8, height);
 }
 
 void KGFX::createPalette(int color) {
@@ -138,18 +182,22 @@ void KGFX::drawVGradient(int x, int y, int y1) {
   int off = abs(y1 - y);
 
   for (int i=3;i<=15;i++) {
-    for (int j = 0; j < 5; j++) {
+    for (int j = 0; j < y1; j++) {
       if (off-- && off > 0) {
         continue;
       }
 
-      chartSpr.drawPixel(x, y, palette[i]);
+      if (y1 > 5) {
+          chartSpr.drawPixel(x, y, palette[8]);
+      } else {
+          chartSpr.drawPixel(x, y, palette[i]);
+      }
       y++;
     }  
   }
 }
 
-int* KGFX::fmtChartArray(std::vector<float> arr) {
+int* KGFX::fmtChartArray(std::vector<float> arr, int height) {
   int multi = 1;
   if (arr.size() < 30) {
     Serial.println("Malformed array len: cannot fmt");
@@ -180,10 +228,15 @@ int* KGFX::fmtChartArray(std::vector<float> arr) {
     }
   }
 
+  int h = 50;
+  if (height > 80) {
+    h = (height/5)*4;
+  }
+
   int diff = hi - lo;
   for(int i=0;i<chartLen;i++) {
     int v = arr[i] * multi;
-    fa[i] = 50-round(((v-lo) *50)/diff);
+    fa[i] = h-round(((v-lo) *h)/diff);
   }
 
   return fa;
