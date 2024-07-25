@@ -125,7 +125,7 @@ void KGFX::drawChart(std::vector<float> arr, int color, int y, int spacing, int 
 
   int multi = 5;
   if (height>80) {
-    multi = height/12;
+    multi = height/13;
   }
   for (int i=0;i<240;i++) {
     for (int j=0;j<height;j++) {
