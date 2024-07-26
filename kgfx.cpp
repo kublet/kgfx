@@ -216,7 +216,6 @@ int* KGFX::fmtChartArray(std::vector<float> arr, int height) {
 
   int hi = arr[0] * multi;
   int lo = arr[0] * multi;
-  int *fa = new int[chartLen]; 
 
   for(int i=1;i<chartLen;i++) {
     int v = arr[i] * multi;
