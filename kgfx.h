@@ -42,9 +42,9 @@ class KGFX {
     void createChartSpriteLarge(int x, int y);
 
     void drawText(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int x, int y);
-    void drawTextCentered(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int y);
+    void drawTextCenter(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int y);
     void drawText(const char *txt, const tftfont_t &f, int color, int x, int y);
-    void drawTextCentered(const char *txt, const tftfont_t &f, int color, int y);
+    void drawTextCenter(const char *txt, const tftfont_t &f, int color, int y);
 
     void deleteSprite(TFT_eSprite &spr);
     void deleteChartSprite();
