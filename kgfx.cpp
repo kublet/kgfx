@@ -17,7 +17,7 @@ void KGFX::init() {
 ***************************************************************************************/
 void KGFX::clear() {
   t.fillScreen(TFT_BLACK);
-  tft.fillScreen(TFT_BLACK);  
+  tft.fillScreen(TFT_BLACK);
 }
 
 /***************************************************************************************
@@ -63,6 +63,24 @@ void KGFX::drawText(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int c
 }
 
 /***************************************************************************************
+ * Function name:           drawTextCenter
+ * Description:             Draws text to given sprite centered
+ ***************************************************************************************/
+void KGFX::drawTextCenter(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int y)
+{
+  tft.TTFdestination(&spr);
+  spr.fillSprite(TFT_BLACK); // Do not fill sprite with black, it will overwrite the sprite
+
+  tft.setTTFFont(f);
+  tft.setTextColor(color, TFT_BLACK);
+  int x = tft.width() / 2 - tft.TTFtextWidth(txt) / 2;
+  tft.setCursor(x, y);
+  tft.print(txt);
+
+  spr.pushSprite(0, 0);
+}
+
+/***************************************************************************************
 ** Function name:           drawText
 ** Description:             Draws text to screen
 ***************************************************************************************/
@@ -70,6 +88,20 @@ void KGFX::drawText(const char *txt, const tftfont_t &f, int color, int x, int y
   tft.setTTFFont(f);
   tft.setTextColor(color, TFT_BLACK);
   tft.setCursor(x,y);
+  tft.print(txt);
+}
+
+/***************************************************************************************
+ * Function name:           drawTextCenter
+ * Description:             Draws text to screen centered
+ ***************************************************************************************/
+void KGFX::drawTextCenter(const char *txt, const tftfont_t &f, int color, int y)
+{
+  tft.setTTFFont(f);
+  tft.setTextColor(color, TFT_BLACK);
+  int x = tft.width() / 2 - tft.TTFtextWidth(txt) / 2;
+  tft.setCursor(x, y);
+  tft.getFont();
   tft.print(txt);
 }
 
@@ -193,7 +225,7 @@ void KGFX::drawVGradient(int x, int y, int y1) {
           chartSpr.drawPixel(x, y, palette[i]);
       }
       y++;
-    }  
+    }
   }
 }
 
