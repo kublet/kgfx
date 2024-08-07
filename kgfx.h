@@ -27,6 +27,8 @@ class KGFX {
     void drawVGradient(int x, int y, int y1=5);
     void drawGraphLine(int x, int y, int x1, int y1, int color);
 
+    void draw_round_hash_mark(int16_t innerR3, int16_t outerR3, int16_t innerR2, int16_t outerR2);
+
   public:
     void init();
     void clear();
@@ -48,6 +50,11 @@ class KGFX {
 
     void deleteSprite(TFT_eSprite &spr);
     void deleteChartSprite();
+
+    void drawGauge(const char *label, const char *suffix, int val, int max, int min, int bg_color, int fg_color, bool hashMarks = true);
+    void drawGauge(const char *label, const char *suffix, double val, int max, int min, int bg_color, int fg_color, bool hashMarks = true);
+    void drawGauge(const char *label, const char *suffix, long val, int max, int min, int bg_color, int fg_color, bool hashMarks = true);
+    void drawGauge(const char *label, const char *suffix, unsigned long val, int max, int min, int bg_color, int fg_color, bool hashMarks = true);
 
     void drawChart(std::vector<float> arr, int color, int y, int spacing=7, int height=80);
     void drawChartWide(std::vector<float> arr, int color, int y);
