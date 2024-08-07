@@ -99,7 +99,6 @@ void KGFX::drawTextCenter(const char *txt, const tftfont_t &f, int color, int y)
   tft.setTextColor(color, TFT_BLACK);
   int x = tft.width() / 2 - tft.TTFtextWidth(txt) / 2;
   tft.setCursor(x, y);
-  tft.getFont();
   tft.print(txt);
 }
 
