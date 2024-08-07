@@ -77,7 +77,7 @@ void KGFX::drawTextCenter(TFT_eSprite &spr, const char *txt, const tftfont_t &f,
   tft.setCursor(x, y);
   tft.print(txt);
 
-  spr.pushSprite(0, 0);
+  spr.pushSprite(0, y);
 }
 
 /***************************************************************************************
