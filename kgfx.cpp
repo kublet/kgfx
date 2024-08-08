@@ -70,7 +70,7 @@ void KGFX::drawTextCenter(TFT_eSprite &spr, const char *txt, const tftfont_t &f,
 {
   tft.TTFdestination(&spr);
   spr.fillSprite(TFT_BLACK);
-  
+
   tft.setTTFFont(f);
   tft.setTextColor(color, TFT_BLACK);
 
