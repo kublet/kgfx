@@ -2,6 +2,11 @@
 
 #include "kgfx.h"
 
+#define SIXTIETH 0.016666667
+#define TWELFTH 0.08333333
+#define SIXTIETH_RADIAN 0.10471976
+#define TWELFTH_RADIAN 0.52359878
+#define RIGHT_ANGLE_RADIAN 1.5707963
 /***************************************************************************************
 ** Function name:           init
 ** Description:             Initializes GFX library
@@ -197,34 +202,10 @@ void KGFX::drawChartLarge(std::vector<float> arr, int color, int y, int height) 
  * @param hashMarks        Draw hash marks on the gauge
  * ***************************************************************************************/
 void KGFX::drawGauge(const char *label, const char *suffix, int val, int max, int min, int bg_color, int fg_color, bool hashMarks) {
-  int center = 120;            // center
-  int width = 20;              // width
-  int innerR = center - width; // inner radius
-  double breakPoint = (double)(val - min) / (max - min);
-  double angle = 220 * breakPoint;
-  int shortMarkLen = ((center - width) * 5 / 6) / 6;
-  int markLen = ((center - width) * 5 / 6) / 2;
-  constexpr float deg2rad = 3.14159265359 / 220;
-  if (val > min) {
-    tft.drawSmoothArc(center, center, innerR, 80, 70 + angle, 290, bg_color, bg_color, true);
-    tft.drawSmoothArc(center, center, innerR, 80, 70, 70 + angle, fg_color, bg_color, true);
-    if (haskMarks) {
-      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
-    }
-  }
-  else { // draw an empty arc
-    tft.drawSmoothArc(center, center, innerR, 80, 70, 290, fg_color, fg_color, true);
-    if (hashMarks) {
-      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
-    }
-  }
   String f = String(val).c_str();
   char buffer[f.length() + 2 + strlen(suffix)];
   sprintf(buffer, "%s%s", f, suffix);
-  drawTextCenter(buffer, Arial_24_Bold, fg_color, center - 10); // value
-  drawText(String(min).c_str(), Arial_12, bg_color, 25, 170);   // min value
-  drawText(String(max).c_str(), Arial_12, bg_color, 180, 170);  // max value
-  drawTextCenter(label, Arial_24_Bold, fg_color, 200);          // label
+  createGauge(label, buffer, val, max, min, bg_color, fg_color, hashMarks);
 }
 
 /***************************************************************************************
@@ -240,33 +221,10 @@ void KGFX::drawGauge(const char *label, const char *suffix, int val, int max, in
  * @param hashMarks        Draw hash marks on the gauge
  * ***************************************************************************************/
 void KGFX::drawGauge(const char *label, const char *suffix, double val, int max, int min, int bg_color, int fg_color, bool hashMarks) {
-  int center = 120;            // center
-  int width = 20;              // width
-  int innerR = center - width; // inner radius
-  double breakPoint = (double)(val - min) / (max - min);
-  double angle = 220 * breakPoint;
-  int shortMarkLen = ((center - width) * 5 / 6) / 6;
-  int markLen = ((center - width) * 5 / 6) / 2;
-  constexpr float deg2rad = 3.14159265359 / 220;
-  if (val > min) {
-    tft.drawSmoothArc(center, center, innerR, 80, 70 + angle, 290, bg_color, bg_color, true);
-    tft.drawSmoothArc(center, center, innerR, 80, 70, 70 + angle, fg_color, bg_color, true);
-    if (haskMarks) {
-      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
-    }
-  } else { // draw an empty arc
-    tft.drawSmoothArc(center, center, innerR, 80, 70, 290, fg_color, fg_color, true);
-    if (hashMarks) {
-      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
-    }
-  }
   String f = String(val).c_str();
   char buffer[f.length() + 2 + strlen(suffix)];
   sprintf(buffer, "%s%s", f, suffix);
-  drawTextCenter(buffer, Arial_24_Bold, fg_color, center - 10); // value
-  drawText(String(min).c_str(), Arial_12, bg_color, 25, 170);   // min value
-  drawText(String(max).c_str(), Arial_12, bg_color, 180, 170);  // max value
-  drawTextCenter(label, Arial_24_Bold, fg_color, 200);          // label
+  createGauge(label, buffer, val, max, min, bg_color, fg_color, hashMarks);
 }
 
 /***************************************************************************************
@@ -282,33 +240,10 @@ void KGFX::drawGauge(const char *label, const char *suffix, double val, int max,
  * @param hashMarks        Draw hash marks on the gauge
  * ***************************************************************************************/
 void KGFX::drawGauge(const char *label, const char *suffix, long val, int max, int min, int bg_color, int fg_color, bool hashMarks) {
-  int center = 120;            // center
-  int width = 20;              // width
-  int innerR = center - width; // inner radius
-  double breakPoint = (double)(val - min) / (max - min);
-  double angle = 220 * breakPoint;
-  int shortMarkLen = ((center - width) * 5 / 6) / 6;
-  int markLen = ((center - width) * 5 / 6) / 2;
-  constexpr float deg2rad = 3.14159265359 / 220;
-  if (val > min) {
-    tft.drawSmoothArc(center, center, innerR, 80, 70 + angle, 290, bg_color, bg_color, true);
-    tft.drawSmoothArc(center, center, innerR, 80, 70, 70 + angle, fg_color, bg_color, true);
-    if (haskMarks) {
-      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
-    }
-  } else { // draw an empty arc
-    tft.drawSmoothArc(center, center, innerR, 80, 70, 290, fg_color, fg_color, true);
-    if (hashMarks) {
-      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
-    }
-  }
   String f = String(val).c_str();
   char buffer[f.length() + 2 + strlen(suffix)];
   sprintf(buffer, "%s%s", f, suffix);
-  drawTextCenter(buffer, Arial_24_Bold, fg_color, center - 10); // value
-  drawText(String(min).c_str(), Arial_12, bg_color, 25, 170);   // min value
-  drawText(String(max).c_str(), Arial_12, bg_color, 180, 170);  // max value
-  drawTextCenter(label, Arial_24_Bold, fg_color, 200);          // label
+  createGauge(label, buffer, val, max, min, bg_color, fg_color, hashMarks);
 }
 
 /***************************************************************************************
@@ -324,33 +259,10 @@ void KGFX::drawGauge(const char *label, const char *suffix, long val, int max, i
  * @param hashMarks        Draw hash marks on the gauge
  * ***************************************************************************************/
 void KGFX::drawGauge(const char *label, const char *suffix, unsigned long val, int max, int min, int bg_color, int fg_color, bool hashMarks) {
-  int center = 120;            // center
-  int width = 20;              // width
-  int innerR = center - width; // inner radius
-  double breakPoint = (double)(val - min) / (max - min);
-  double angle = 220 * breakPoint;
-  int shortMarkLen = ((center - width) * 5 / 6) / 6;
-  int markLen = ((center - width) * 5 / 6) / 2;
-  constexpr float deg2rad = 3.14159265359 / 220;
-  if (val > min) {
-    tft.drawSmoothArc(center, center, innerR, 80, 70 + angle, 290, bg_color, bg_color, true);
-    tft.drawSmoothArc(center, center, innerR, 80, 70, 70 + angle, fg_color, bg_color, true);
-    if (haskMarks) {
-      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
-    }
-  } else { // draw an empty arc
-    tft.drawSmoothArc(center, center, innerR, 80, 70, 290, fg_color, fg_color, true);
-    if (hashMarks) {
-      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
-    }
-  }
   String f = String(val).c_str();
   char buffer[f.length() + 2 + strlen(suffix)];
   sprintf(buffer, "%s%s", f, suffix);
-  drawTextCenter(buffer, Arial_24_Bold, fg_color, center - 10); // value
-  drawText(String(min).c_str(), Arial_12, bg_color, 25, 170);   // min value
-  drawText(String(max).c_str(), Arial_12, bg_color, 180, 170);  // max value
-  drawTextCenter(label, Arial_24_Bold, fg_color, 200);          // label
+  createGauge(label, buffer, val, max, min, bg_color, fg_color, hashMarks);
 }
 
 void KGFX::createPalette(int color) {
@@ -377,6 +289,15 @@ void KGFX::drawGraphLine(int x, int y, int x1, int y1, int pcolor) {
   }
 }
 
+/***************************************************************************************
+ * Draw major and minor hash marks around the gauge dial.
+ * The gauge dial is 220 degrees, the hash marks are drawn every 6 degrees.
+ * The major hash marks are 10 degrees long and the minor hash marks are 5 degrees long.
+ * @param innerR1 The inner radius of the major hash marks
+ * @param outerR1 The outer radius of the major hash marks
+ * @param innerR2 The inner radius of the minor hash marks
+ * @param outerR2 The outer radius of the minor hash marks
+ * ***************************************************************************************/
 void KGFX::draw_round_hash_mark(int16_t innerR1, int16_t outerR1, int16_t innerR2, int16_t outerR2) {
   float x, y;
   int16_t x0, x1, y0, y1, innerR, outerR;
@@ -405,6 +326,45 @@ void KGFX::draw_round_hash_mark(int16_t innerR1, int16_t outerR1, int16_t innerR
 
     tft.drawLine(x0, y0, x1, y1, c);
   }
+}
+
+/***************************************************************************************
+ * Function name:    createGauge
+ * Description:      Creates a gauge with integer value
+ * @param label      Label for the gauge
+ * @param buffer     formatted stat
+ * @param val        Value for the gauge
+ * @param max        Maximum value for the gauge
+ * @param min        Minimum value for the gauge
+ * @param bg_color   Background color for the gauge
+ * @param fg_color   Foreground color for the gauge
+ * @param hashMarks  Draw hash marks on the gauge
+ * ***************************************************************************************/
+void KGFX::createGauge(const char *label, const char *buffer, int val, int max, int min, int bg_color, int fg_color, bool hashMarks) {
+  int center = 120;            // center
+  int width = 20;              // width
+  int innerR = center - width; // inner radius
+  double breakPoint = (double)(val - min) / (max - min);
+  double angle = 220 * breakPoint;
+  int shortMarkLen = ((center - width) * 5 / 6) / 6;
+  int markLen = ((center - width) * 5 / 6) / 2;
+  constexpr float deg2rad = 3.14159265359 / 220;
+  if (val > min) {
+    tft.drawSmoothArc(center, center, innerR, 80, 70 + angle, 290, bg_color, bg_color, true);
+    tft.drawSmoothArc(center, center, innerR, 80, 70, 70 + angle, fg_color, bg_color, true);
+    if (hashMarks) {
+      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
+    }
+  } else { // draw an empty arc
+    tft.drawSmoothArc(center, center, innerR, 80, 70, 290, fg_color, fg_color, true);
+    if (hashMarks) {
+      draw_round_hash_mark((center - width) - markLen, center - width, (center - width) - shortMarkLen, center - width);
+    }
+  }
+  drawTextCenter(buffer, Arial_24_Bold, fg_color, center - 10); // value
+  drawText(String(min).c_str(), Arial_12, bg_color, 25, 170);   // min value
+  drawText(String(max).c_str(), Arial_12, bg_color, 180, 170);  // max value
+  drawTextCenter(label, Arial_24_Bold, fg_color, 200);          // label
 }
 
 void KGFX::drawVGradient(int x, int y, int y1) {
