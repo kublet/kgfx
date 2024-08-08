@@ -76,7 +76,7 @@ void KGFX::drawTextCenter(TFT_eSprite &spr, const char *txt, const tftfont_t &f,
 
   int w = tft.TTFtextWidth(txt); 
   int x1 = (spr.width() - w)/2; // center text in sprite
-  int x2 = (tft.width() - spr.width)/2; // center sprite on screen
+  int x2 = (tft.width() - spr.width())/2; // center sprite on screen
 
   tft.setCursor(x1, 0);
   tft.print(txt);
