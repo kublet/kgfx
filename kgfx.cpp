@@ -66,10 +66,10 @@ void KGFX::drawText(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int c
  * Function name:           drawTextCenter
  * Description:             Draws text to given sprite centered
  ***************************************************************************************/
-void KGFX::drawTextCenter(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int y)
-{
+
+void KGFX::drawTextCenter(TFT_eSprite &spr, const char *txt, const tftfont_t &f, int color, int y) {
   tft.TTFdestination(&spr);
-  spr.fillSprite(TFT_BLACK); // Do not fill sprite with black, it will overwrite the sprite
+  spr.fillSprite(TFT_BLACK);
 
   tft.setTTFFont(f);
   tft.setTextColor(color, TFT_BLACK);
@@ -95,13 +95,12 @@ void KGFX::drawText(const char *txt, const tftfont_t &f, int color, int x, int y
  * Function name:           drawTextCenter
  * Description:             Draws text to screen centered
  ***************************************************************************************/
-void KGFX::drawTextCenter(const char *txt, const tftfont_t &f, int color, int y)
-{
+
+void KGFX::drawTextCenter(const char *txt, const tftfont_t &f, int color, int y) {
   tft.setTTFFont(f);
   tft.setTextColor(color, TFT_BLACK);
   int x = tft.width() / 2 - tft.TTFtextWidth(txt) / 2;
   tft.setCursor(x, y);
-  tft.getFont();
   tft.print(txt);
 }
 
